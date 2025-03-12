@@ -8,7 +8,7 @@ import "react-datepicker/dist/react-datepicker.css"
 import botBrandLogo from "../assets/uknowva.png" // Import the bot logo
 import ThemeToggle from "./ThemeToggle"
 // Change this constant to your server's IP or domain as needed
-const API_URL = "https://parser.uknowva.cloud";
+const API_URL = "https://aichat.uknowva-stage.in";
 const MAX_HISTORY_LENGTH = 50; // Maximum number of messages to keep in history
 
 const QUICK_ACTIONS = [
