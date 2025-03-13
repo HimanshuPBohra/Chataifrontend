@@ -63,9 +63,7 @@ export default function Message({
 
 if (typeof content === "string") {
   return (
-    <div className="whitespace-pre-wrap"> 
-      <ReactMarkdown>{content}</ReactMarkdown> 
-    </div>
+    <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: content }} />
   )
 }
 
