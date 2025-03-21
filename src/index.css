@@ -1,195 +1,34 @@
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  --primary-blue: #007bff;
+  --primary-blue-light: #66b2ff;
+  --primary-blue-dark: #0056b3;
+  --primary-green: #28a745;
+  --primary-green-light: #71d88c;
+  --primary-green-dark: #1c7430;
+  --accent-gold: #ffc107;
+  --accent-gold-light: #ffd54f;
+  --accent-gold-dark: #c79100;
+  --neutral-100: #ffffff;
+  --neutral-200: #f8f9fa;
+  --neutral-300: #e9ecef;
+  --neutral-400: #dee2e6;
+  --neutral-500: #ced4da;
+  --neutral-600: #adb5bd;
+  --neutral-700: #6c757d;
+  --neutral-800: #495057;
+  --neutral-900: #343a40;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --transition-base: all 0.3s ease;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
-    "Helvetica Neue", sans-serif;
-  --blue-primary: #3b82f6;
-  --blue-secondary: #60a5fa;
-  --blue-dark: #2563eb;
-  --gray-light: #f9fafb;
-  --gray-dark: #1f2937;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-}
-
-/* Dark mode styles */
-.dark {
-  color-scheme: dark;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulseGlow {
-  0% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-.animate-slideIn {
-  animation: slideIn 0.3s ease-out forwards;
-}
-
-.animate-pulseGlow {
-  animation: pulseGlow 2s infinite;
-}
-
-/* Chat UI Components */
-.chat-body .blue-bubble,
-.chat-body .blue-bubble:hover {
-  background: var(--blue-primary);
-  padding: 8px 20px;
-  border-radius: 20px;
-  border-top-right-radius: 0px;
-  border: 0px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.dark .chat-body .blue-bubble,
-.dark .chat-body .blue-bubble:hover {
-  background: var(--blue-dark);
-}
-
-.chat-body .grey-bubble,
-.chat-body .grey-bubble:hover {
-  background: var(--gray-light);
-  padding: 8px 20px;
-  border-radius: 20px;
-  border-top-left-radius: 0px;
-  border: 0px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.dark .chat-body .grey-bubble,
-.dark .chat-body .grey-bubble:hover {
-  background: var(--gray-dark);
-}
-
-.inner-bubble {
-  background: rgba(255, 255, 255, 0.6);
-  border: 0px;
-  transition: all 0.3s ease;
-}
-
-.dark .inner-bubble {
-  background: rgba(31, 41, 55, 0.6);
-}
-
-/* DatePicker customization */
-.react-datepicker {
-  font-family: inherit !important;
-  border-radius: 0.5rem !important;
-  overflow: hidden !important;
-  border: 1px solid #e5e7eb !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-  transition: all 0.3s ease !important;
-}
-
-.dark .react-datepicker {
-  background-color: var(--gray-dark) !important;
-  border-color: #374151 !important;
-}
-
-.react-datepicker__header {
-  background-color: #f3f4f6 !important;
-  border-bottom: 1px solid #e5e7eb !important;
-}
-
-.dark .react-datepicker__header {
-  background-color: #374151 !important;
-  border-color: #4b5563 !important;
-}
-
-.react-datepicker__day-name,
-.react-datepicker__day,
-.react-datepicker__time-name {
-  color: #1f2937 !important;
-}
-
-.dark .react-datepicker__day-name,
-.dark .react-datepicker__day,
-.dark .react-datepicker__time-name {
-  color: #e5e7eb !important;
-}
-
-.react-datepicker__day:hover {
-  background-color: #dbeafe !important;
-}
-
-.dark .react-datepicker__day:hover {
-  background-color: #1e40af !important;
-}
-
-.react-datepicker__day--selected,
-.react-datepicker__day--keyboard-selected {
-  background-color: var(--blue-primary) !important;
-  color: white !important;
-}
-
-.dark .react-datepicker__day--selected,
-.dark .react-datepicker__day--keyboard-selected {
-  background-color: var(--blue-dark) !important;
-}
-
-.react-datepicker__day--disabled {
-  color: #9ca3af !important;
-}
-
-.dark .react-datepicker__day--disabled {
-  color: #6b7280 !important;
-}
-
-/* Transitions */
-.transition-all {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-}
-
-.transition-colors {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-}
-
-.transition-transform {
-  transition-property: transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-}
-

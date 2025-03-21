@@ -2,18 +2,18 @@
 
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { Calendar, Clock, CheckCircle2, XCircle, MessageSquare } from "lucide-react"
+import { Calendar, Clock, CheckCircle2, XCircle, MessageSquare, Zap, User } from "lucide-react"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
-import botLogo from "../assets/uknowva.png" // Import the bot logo
-import userAvatar from "../assets/avtar.png" // Import the user avatar
+import botLogo from "../assets/uknowva.png" // Bot logo import
+import userAvatar from "../assets/avtar.png" // User avatar import
 
 export default function Message({
   message,
   onDateSelect,
   onSend,
-  botLogoPath = botLogo, // Use the imported bot logo
-  userAvatarPath = userAvatar, // Use the imported user avatar
+  botLogoPath = botLogo,
+  userAvatarPath = userAvatar,
   botName = "ChatBot",
   showTimestamp = false,
 }) {
@@ -25,35 +25,24 @@ export default function Message({
     if (!timestamp) return ""
     const date = new Date(timestamp)
     if (isNaN(date.getTime())) return ""
-
     const now = new Date()
     const isToday = date.toDateString() === now.toDateString()
-    
-    if (isToday) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    } else {
-      return date.toLocaleDateString([], { 
-        month: 'short', 
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    }
+    return isToday
+      ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      : date.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
   }
-
-  const isValidDate = (date) => date instanceof Date && !isNaN(date.getTime())
 
   const renderAvatar = () => {
     if (isBot) {
       return (
-        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-          <MessageSquare className="w-4 h-4 text-blue-600" />
+        <div className="w-12 h-12 bg-gradient-to-br from-primary-blue to-primary-green rounded-xl flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border-2 border-white">
+          <img src={botLogoPath} alt="Bot" className="w-8 h-8" />
         </div>
       )
     }
     return (
-      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-        <img src={userAvatarPath} alt="User" className="w-6 h-6 rounded-full" />
+      <div className="w-12 h-12 bg-gradient-to-br from-accent-gold-light to-accent-gold rounded-xl flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border-2 border-white">
+        <User className="w-6 h-6 text-white" />
       </div>
     )
   }
@@ -61,21 +50,28 @@ export default function Message({
   const renderMessageContent = () => {
     if (!content) return null
 
-if (typeof content === "string") {
-  return (
-    <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: content }} />
-  )
-}
+    if (typeof content === "string" && content.includes("<table")) {
+      return (
+        <div className="w-full overflow-x-auto rounded-xl shadow-sm bg-white p-2 my-2 animate-fadeIn">
+          <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: content }} />
+        </div>
+      )
+    }
 
-    if (typeof content === "object") {
-      if (content.message) {
-        return (
-          <div className="whitespace-pre-wrap">
-            <ReactMarkdown>{content.message}</ReactMarkdown>
-          </div>
-        )
-      }
-      return String(content)
+    if (typeof content === "string") {
+      return (
+        <div className="whitespace-pre-wrap">
+          <ReactMarkdown>{content}</ReactMarkdown>
+        </div>
+      )
+    }
+
+    if (typeof content === "object" && content.message) {
+      return (
+        <div className="whitespace-pre-wrap">
+          <ReactMarkdown>{content.message}</ReactMarkdown>
+        </div>
+      )
     }
 
     return String(content)
@@ -87,17 +83,17 @@ if (typeof content === "string") {
     switch (content.type) {
       case "date_picker":
         return (
-          <div className="mt-2 bg-white rounded-lg p-3 shadow-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <Calendar className="w-4 h-4 text-blue-600" />
-              <span className="text-gray-700 text-sm">{content.message}</span>
+          <div className="mt-3 bg-white/90 rounded-xl p-4 shadow-md border border-primary-blue-light animate-fadeIn">
+            <div className="flex items-center gap-2 mb-3">
+              <Calendar className="w-5 h-5 text-primary-blue" />
+              <span className="text-gray-700 font-medium">{content.message}</span>
             </div>
             <DatePicker
               selected={null}
               onChange={(date) => onDateSelect && onDateSelect(content.field, date)}
               dateFormat="yyyy-MM-dd"
               minDate={new Date()}
-              className="w-full p-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue shadow-sm"
               placeholderText="Select a date"
             />
           </div>
@@ -105,40 +101,19 @@ if (typeof content === "string") {
 
       case "leave_type_selection":
         return (
-          <div className="mt-2 bg-white rounded-lg p-3 shadow-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <Clock className="w-4 h-4 text-blue-600" />
-              <span className="text-gray-700 text-sm">{content.message}</span>
+          <div className="mt-3 bg-white/90 rounded-xl p-4 shadow-md border border-primary-blue-light animate-fadeIn">
+            <div className="flex items-center gap-2 mb-3">
+              <Clock className="w-5 h-5 text-primary-blue" />
+              <span className="text-gray-700 font-medium">{content.message}</span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               {content.options.map((option, index) => (
                 <button
                   key={index}
                   onClick={() => onDateSelect && onDateSelect("leave_type", option.value)}
-                  className="p-2 text-left border rounded-lg hover:bg-gray-50 transition-colors"
+                  className="p-3 text-left border rounded-lg bg-gray-50 hover:bg-blue-50 hover:border-primary-blue-light transition-all duration-300 shadow-sm"
                 >
-                  <span className="text-sm text-gray-700">{option.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )
-
-      case "leave_type_selection_for_apply":
-        return (
-          <div className="mt-2 bg-white rounded-lg p-3 shadow-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <Calendar className="w-4 h-4 text-blue-600" />
-              <span className="text-gray-700 text-sm">{content.message}</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {content.options.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => onSelectLeaveTypeForApply && onSelectLeaveTypeForApply(option.value)}
-                  className="p-2 text-left border rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <span className="text-sm text-gray-700">{option.label}</span>
+                  <span className="text-sm font-medium text-gray-700">{option.label}</span>
                 </button>
               ))}
             </div>
@@ -149,131 +124,62 @@ if (typeof content === "string") {
         let details
         try {
           details = typeof content.details === "string" ? JSON.parse(content.details) : content.details
-        } catch (error) {
-          console.error("Failed to parse details:", error)
-          details = content.details || {}
+        } catch (e) {
+          console.error("Error parsing confirmation details:", e)
+          details = {}
         }
-
         return (
-          <div className="mt-2 p-3 mb-2 bg-blue-50/50 dark:bg-blue-900/20 rounded-lg border border-gray-100 dark:border-gray-700 inner-bubble transition-all duration-300 animate-fadeIn">
+          <div className="mt-3 bg-white/90 rounded-xl p-4 shadow-md border border-primary-blue-light animate-fadeIn">
             <div className="flex items-center gap-2 mb-3">
-              <Calendar size={16} className="text-blue-600 dark:text-blue-400" />
-              <span className="font-medium text-gray-800 dark:text-white text-sm">Leave Request Details</span>
+              <CheckCircle2 className="w-5 h-5 text-primary-blue" />
+              <span className="text-gray-700 font-medium">Confirm Leave Details</span>
             </div>
-            <div className="space-y-2 text-sm">
-              {details.user_id && (
-                <div className="flex justify-between items-center p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-200">
-                  <span className="text-gray-700 dark:text-gray-300">User ID</span>
-                  <span className="font-medium text-blue-900 dark:text-blue-300">{details.user_id}</span>
-                </div>
-              )}
-              <div className="flex justify-between items-center p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-200">
-                <span className="text-gray-700 dark:text-gray-300">Start Date</span>
-                <span className="font-medium text-blue-900 dark:text-blue-300">{details.startDate}</span>
+            <div className="space-y-2 mb-4 bg-gray-50 p-3 rounded-lg border border-gray-200">
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-sm text-gray-500">Leave Type:</span>
+                <span className="text-sm font-medium">{details.Leave_type}</span>
               </div>
-              <div className="flex justify-between items-center p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-200">
-                <span className="text-gray-700 dark:text-gray-300">End Date</span>
-                <span className="font-medium text-blue-900 dark:text-blue-300">{details.endDate}</span>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-sm text-gray-500">Start Date:</span>
+                <span className="text-sm font-medium">{details.startDate}</span>
               </div>
-              <div className="flex justify-between items-center p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-200">
-                <span className="text-gray-700 dark:text-gray-300">Type</span>
-                <span className="font-medium text-blue-900 dark:text-blue-300">
-                  {details.Leave_type === "CL"
-                    ? "Casual Leave"
-                    : details.Leave_type === "PL"
-                      ? "Privilege Leave"
-                      : details.Leave_type === "SL"
-                        ? "Sick Leave"
-                        : details.Leave_type}
-                </span>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-sm text-gray-500">End Date:</span>
+                <span className="text-sm font-medium">{details.endDate}</span>
               </div>
-              <div className="flex justify-between items-center p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-200">
-                <span className="text-gray-700 dark:text-gray-300">Reason</span>
-                <span className="font-medium text-blue-900 dark:text-blue-300">{details.reason}</span>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-sm text-gray-500">Half Day:</span>
+                <span className="text-sm font-medium">{details.half_day === "Y" ? "Yes" : "No"}</span>
               </div>
-              {details.half_day === "Y" && (
-                <div className="flex justify-between items-center p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-200">
-                  <span className="text-gray-700 dark:text-gray-300">Duration</span>
-                  <span className="font-medium text-blue-900 dark:text-blue-300">Half Day</span>
-                </div>
-              )}
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-sm text-gray-500">Reason:</span>
+                <span className="text-sm font-medium">{details.reason}</span>
+              </div>
             </div>
-            <div className="mt-3 flex gap-2 justify-end p-2">
+            <p className="text-sm mb-3 text-gray-600">{content.message}</p>
+            <div className="flex gap-2">
               <button
-                disabled={actionClicked !== ""}
+                className={`flex-1 py-2 rounded-lg bg-green-500 text-white font-medium flex items-center justify-center gap-1 shadow-sm hover:bg-green-600 transition-all duration-300 ${actionClicked === "confirm" ? "opacity-50 cursor-not-allowed" : ""}`}
+                disabled={actionClicked === "confirm"}
                 onClick={() => {
-                  if (!actionClicked) {
-                    setActionClicked("cancelled");
-                    onSend && onSend("N");
-                  }
+                  setActionClicked("confirm")
+                  onSend && onSend("Y")
                 }}
-                className={`px-3 py-1.5 text-sm font-medium ${
-                  actionClicked === "cancelled" 
-                    ? "text-red-600 bg-red-50 border border-red-200" 
-                    : "text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-blue-300 dark:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-                } rounded-lg transition-all duration-300`}
               >
-                {actionClicked === "cancelled" ? (
-                  <span className="flex items-center">
-                    <XCircle className="w-4 h-4 mr-1" />
-                    Cancelled
-                  </span>
-                ) : "Cancel"}
+                <CheckCircle2 className="w-4 h-4 text-white" />
+                <span>Confirm</span>
               </button>
               <button
-                disabled={actionClicked !== ""}
+                className={`flex-1 py-2 rounded-lg bg-red-500 text-white font-medium flex items-center justify-center gap-1 shadow-sm hover:bg-red-600 transition-all duration-300 ${actionClicked === "cancel" ? "opacity-50 cursor-not-allowed" : ""}`}
+                disabled={actionClicked === "cancel"}
                 onClick={() => {
-                  if (!actionClicked) {
-                    setActionClicked("confirmed");
-                    onSend && onSend("Y");
-                  }
+                  setActionClicked("cancel")
+                  onSend && onSend("N")
                 }}
-                className={`px-3 py-1.5 text-sm font-medium ${
-                  actionClicked === "confirmed" 
-                    ? "text-white bg-green-600" 
-                    : "text-white bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600"
-                } rounded-lg transition-all duration-300`}
               >
-                {actionClicked === "confirmed" ? (
-                  <span className="flex items-center">
-                    <CheckCircle2 className="w-4 h-4 mr-1" />
-                    Confirmed
-                  </span>
-                ) : "Confirm"}
+                <XCircle className="w-4 h-4 text-white" />
+                <span>Cancel</span>
               </button>
-            </div>
-          </div>
-        )
-
-
-      case "leave_balance":
-        return (
-          <div className="mt-2 bg-white rounded-lg p-3 shadow-sm">
-            <div className="flex items-center gap-2 mb-3">
-              <Clock className="w-4 h-4 text-blue-600" />
-              <span className="text-gray-700 text-sm font-medium">Leave Balance Details</span>
-            </div>
-            <div className="space-y-2">
-              {Object.entries(content.data).map(([key, value]) => {
-                const percentage = Math.min(100, (value.leave_balance / 30) * 100)
-                return (
-                  <div
-                    key={key}
-                    className="p-2 bg-white border rounded-lg hover:border-blue-300 transition-all duration-200"
-                  >
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm text-gray-600">{value.leave_type}</span>
-                      <span className="text-sm font-medium text-blue-600">{value.leave_balance} days</span>
-                    </div>
-                    <div className="w-full bg-gray-100 rounded-full h-1.5">
-                      <div
-                        className="bg-blue-500 h-1.5 rounded-full transition-all duration-500"
-                        style={{ width: `${percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
             </div>
           </div>
         )
@@ -281,44 +187,51 @@ if (typeof content === "string") {
       case "leave_response":
         const isSuccess = content.status === "success"
         return (
-          <div className={`mt-2 p-3 rounded-lg ${isSuccess ? "bg-red-50" : "bg-green-50"}`}>
-            <div className="flex items-center gap-2">
+          <div className={`mt-3 rounded-xl p-4 shadow-md border animate-fadeIn ${isSuccess ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
+            <div className="flex items-center gap-2 mb-3">
               {isSuccess ? (
-                <XCircle className="w-5 h-5 text-red-500" />
-              ) : (
                 <CheckCircle2 className="w-5 h-5 text-green-500" />
+              ) : (
+                <XCircle className="w-5 h-5 text-red-500" />
               )}
-              <span className={`text-sm ${isSuccess ? "text-red-700" : "text-green-700"}`}>
-                {content.message}
+              <span className={`font-medium ${isSuccess ? "text-green-700" : "text-red-700"}`}>
+                {isSuccess ? "Success" : "Error"}
               </span>
             </div>
+            <p className={`text-sm ${isSuccess ? "text-green-600" : "text-red-600"}`}>{content.message}</p>
+            {isSuccess && (
+              <div className="mt-2 flex items-center gap-2 bg-white p-2 rounded-lg border border-green-100">
+                <Zap className="w-4 h-4 text-accent-gold" />
+                <span className="text-xs text-gray-600">Your leave request has been submitted successfully.</span>
+              </div>
+            )}
           </div>
         )
+
       default:
         return null
     }
   }
 
   return (
-    <div className={`flex gap-3 ${isBot ? "" : "flex-row-reverse"} group`}>
-      {renderAvatar()}
-      <div className={`flex-1 ${isBot ? "pr-12" : "pl-12"}`}>
-        {showTimestamp && (
-          <div className={`text-xs text-gray-400 mb-1 ${isBot ? "" : "text-right"}`}>
-            {formatTimestamp(timestamp)}
-          </div>
-        )}
+    <div className={`flex gap-4 ${isBot ? "animate-slideInLeft" : "animate-slideInRight justify-end"}`}>
+      {isBot && <div className="mt-1">{renderAvatar()}</div>}
+      <div className={`flex flex-col max-w-[85%] ${!isBot && "items-end"}`}>
         <div
-          className={`p-3 rounded-lg ${
-            isBot
-              ? "bg-gray-100 text-gray-700"
-              : "bg-blue-600 text-white"
+          className={`px-5 py-4 rounded-2xl shadow-sm text-base ${
+            isBot ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-800"
           }`}
         >
           {renderMessageContent()}
+          {renderStructuredContent()}
         </div>
-        {renderStructuredContent()}
+        {showTimestamp && (
+          <span className="text-sm text-gray-500 mt-1 px-1">
+            {formatTimestamp(timestamp)}
+          </span>
+        )}
       </div>
+      {!isBot && <div className="mt-1">{renderAvatar()}</div>}
     </div>
   )
 }
