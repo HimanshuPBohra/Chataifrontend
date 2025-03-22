@@ -11,7 +11,7 @@ import { ChevronLeft, Send, Calendar, Clock, FileText, Home, MessageSquare, Tras
 import "react-datepicker/dist/react-datepicker.css"
 import botBrandLogo from "../assets/uknowva.png"
 
-const API_URL = "http://127.0.0.1:5000"
+const API_URL = "https://aichat.uknowva-stage.in"
 const MAX_HISTORY_LENGTH = 50
 
 const QUICK_ACTIONS = [
