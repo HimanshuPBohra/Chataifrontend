@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState, useRef, useEffect } from "react"
 import axios from "axios"
@@ -11,14 +11,15 @@ import { ChevronLeft, Send, Calendar, Clock, FileText, Home, MessageSquare, Tras
 import "react-datepicker/dist/react-datepicker.css"
 import botBrandLogo from "../assets/uknowva.png"
 
-const API_URL = "https://aichat.uknowva-stage.in"
+const API_URL = "http://127.0.0.1:5000"
 const MAX_HISTORY_LENGTH = 50
 
 const QUICK_ACTIONS = [
   { label: "Apply Leave", icon: Calendar, query: "apply_leave", description: "Submit a new leave request" },
   { label: "Leave Balance", icon: Clock, query: "leave balance", description: "Check your available leave days" },
   { label: "Cancel Leave", icon: Trash2, query: "cancel leave", description: "Cancel an existing leave request" },
-  { label: "Leave History", icon: FileText, query: "Leave history", description: "View your Leave History" }
+  { label: "Leave History", icon: FileText, query: "Leave history", description: "View your Leave History" },
+  { label: "Download Payslip", icon: FileText, query: "download_payslip", description: "Download your payslips" }
 ]
 
 const WELCOME_MESSAGES = [
@@ -251,7 +252,7 @@ export default function Chatbot({ botBrandLogoPath = botBrandLogo }) {
     setInput("")
     const userMessage = { role: "user", content: messageText, timestamp: new Date().toISOString() }
     setMessages(prev => [...prev, userMessage])
-
+    
     if (currentStep) {
       switch (currentStep) {
         case "leave_type":
@@ -351,10 +352,37 @@ export default function Chatbot({ botBrandLogoPath = botBrandLogo }) {
             const response = await axios.post(`${API_URL}/chat`, { question: messageText, conversation_id: currentConversationId, context })
             const answerContent = response.data.answer
             if (!answerContent) {
-              setMessages(prev => [...prev, { role: "bot", content: "Sorry, I did not receive a valid response. Please try again. 😕", timestamp: new Date().toISOString() }])
+              setMessages(prev => [...prev, { role: "bot", content: "Sorry, I did not receive a valid response. Please try again. 😕", timestamp: new Date().toISOString() }]);
+            } else if (Array.isArray(answerContent) && messageText.toLowerCase().includes("leave history")) {
+              const botMessage = {
+                role: "bot",
+                content: {
+                  type: "leave_history",
+                  leaveHistory: answerContent
+                },
+                timestamp: new Date().toISOString()
+              };
+              setMessages(prev => [...prev, botMessage]);
+            } else if (answerContent && typeof answerContent === "object" && answerContent.status && Array.isArray(answerContent.data)) {
+              const botMessage = {
+                role: "bot",
+                content: {
+                  type: "payslip_download",
+                  payslips: answerContent.data
+                },
+                timestamp: new Date().toISOString()
+              };
+              setMessages(prev => [...prev, botMessage]);
+            } else if (answerContent && typeof answerContent === "object" && !answerContent.status) {
+              const errorMessage = {
+                role: "bot",
+                content: "Error fetching data. Please try again later.",
+                timestamp: new Date().toISOString()
+              };
+              setMessages(prev => [...prev, errorMessage]);
             } else {
-              const botMessage = { role: "bot", content: answerContent, timestamp: new Date().toISOString() }
-              setMessages(prev => [...prev, botMessage])
+              const botMessage = { role: "bot", content: answerContent, timestamp: new Date().toISOString() };
+              setMessages(prev => [...prev, botMessage]);
             }
           } catch (error) {
             const errorMessage = { role: "bot", content: `Sorry, I encountered an error: ${error.message}. Please try again. 😟`, timestamp: new Date().toISOString() }

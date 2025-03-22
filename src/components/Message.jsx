@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { Calendar, Clock, CheckCircle2, XCircle, MessageSquare, Zap, User } from "lucide-react"
+import { Calendar, Clock, CheckCircle2, XCircle, MessageSquare, Zap, User, FileText } from "lucide-react"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
-import botLogo from "../assets/uknowva.png" // Bot logo import
-import userAvatar from "../assets/avtar.png" // User avatar import
+import botLogo from "../assets/uknowva.png"
+import userAvatar from "../assets/avtar.png"
 
 export default function Message({
   message,
@@ -183,6 +183,51 @@ export default function Message({
             </div>
           </div>
         )
+        
+        case "leave_history":
+          const leaveHistory = content.leaveHistory;
+          if (!leaveHistory || leaveHistory.length === 0) {
+            return (
+              <div className="mt-3 bg-white/90 rounded-xl p-4 shadow-md border border-primary-blue-light animate-fadeIn">
+                <p className="text-gray-700">No leave history available.</p>
+              </div>
+            );
+          }
+          return (
+            <div className="mt-3 bg-white/90 rounded-xl p-4 shadow-md border border-primary-blue-light animate-fadeIn">
+              <h2 className="text-lg font-medium mb-3 text-gray-800">Leave History</h2>
+              <div className="overflow-x-auto">
+                <table className="min-w-full bg-white border border-gray-200">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="py-2 px-4 text-left text-sm font-medium text-gray-700">ID</th>
+                      <th className="py-2 px-4 text-left text-sm font-medium text-gray-700">Status</th>
+                      <th className="py-2 px-4 text-left text-sm font-medium text-gray-700">From</th>
+                      <th className="py-2 px-4 text-left text-sm font-medium text-gray-700">To</th>
+                      <th className="py-2 px-4 text-left text-sm font-medium text-gray-700">Duration (Days)</th>
+                      <th className="py-2 px-4 text-left text-sm font-medium text-gray-700">Reason</th>
+                      <th className="py-2 px-4 text-left text-sm font-medium text-gray-700">Approved By</th>
+                      <th className="py-2 px-4 text-left text-sm font-medium text-gray-700">Leave Type</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {leaveHistory.map((leave, index) => (
+                      <tr key={index} className={leave.status === 'PENDING' ? 'bg-yellow-50' : ''}>
+                        <td className="border-t px-4 py-2 text-sm text-gray-700">{leave.id}</td>
+                        <td className="border-t px-4 py-2 text-sm text-gray-700">{leave.status}</td>
+                        <td className="border-t px-4 py-2 text-sm text-gray-700">{leave.from}</td>
+                        <td className="border-t px-4 py-2 text-sm text-gray-700">{leave.to}</td>
+                        <td className="border-t px-4 py-2 text-sm text-gray-700">{leave.duration}</td>
+                        <td className="border-t px-4 py-2 text-sm text-gray-700">{leave.leave_reason}</td>
+                        <td className="border-t px-4 py-2 text-sm text-gray-700">{leave.approved_by}</td>
+                        <td className="border-t px-4 py-2 text-sm text-gray-700">{leave.leave_type} ({leave.short_code})</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
 
       case "leave_response":
         const isSuccess = content.status === "success"
@@ -205,6 +250,43 @@ export default function Message({
                 <span className="text-xs text-gray-600">Your leave request has been submitted successfully.</span>
               </div>
             )}
+          </div>
+        )
+
+      case "payslip_download":
+        const payslips = content.payslips
+        if (!payslips || payslips.length === 0) {
+          return (
+            <div className="mt-3 bg-white/90 rounded-xl p-4 shadow-md border border-primary-blue-light animate-fadeIn">
+              <p className="text-gray-700">No payslips available.</p>
+            </div>
+          )
+        }
+        return (
+          <div className="mt-3 bg-white/90 rounded-xl p-4 shadow-md border border-primary-blue-light animate-fadeIn">
+            <h2 className="text-lg font-medium mb-3 text-gray-800">Payslip Download</h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white border border-gray-200">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="py-2 px-4 text-left text-sm font-medium text-gray-700">Month & Year</th>
+                    <th className="py-2 px-4 text-left text-sm font-medium text-gray-700">Download</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {payslips.map((payslip, index) => (
+                    <tr key={index} className="hover:bg-gray-50">
+                      <td className="border-t px-4 py-2 text-sm text-gray-700">{payslip.month_year}</td>
+                      <td className="border-t px-4 py-2 text-sm">
+                        <a href={payslip.payslip_link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                          Download
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )
 
